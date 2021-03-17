@@ -247,12 +247,17 @@ sub decorate_email_gecos {
             } else {
                 $decorated .= $item->{text};
             }
+        } elsif ($item->{event} eq 'start'
+            and $item->{attr}
+            and 0 == index(lc($item->{attr}->{href} // ''), 'mailto:')) {
+            # Empties mailto URL in link target
+            my $text = $item->{text};
+            $text =~ s{(?<=\bhref=)[^\s>]+}{"mailto:"}gi;
+            $decorated .= $text;
         } else {
             $decorated .= $item->{text};
         }
     }
-
-    $decorated .= $language->gettext('No gecos') if ($decorated eq ': ');
 
     return $decorated;
 }
